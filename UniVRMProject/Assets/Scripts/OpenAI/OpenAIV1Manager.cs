@@ -52,12 +52,14 @@ public class OpenAIV1Manager : MonoBehaviour {
         request.MaxTokens = Instance.MaxTokens;
         request.Model = Instance.Model;
         var response = await API.CreateChatCompletion(request);
-        foreach (var choice in response.Choices) {
-            Debug.Log(choice.Message.Content);
-        }
+        //foreach (var choice in response.Choices) {
+        //    Debug.Log(choice.Message.Content);
+        //}
+        AzureTTSManager.Talk(response.Choices[0].Message.Content);
         return response.Choices[0].Message.Content;
     }
     public static async Task<string> Completion(string _prompt) {
+        Debug.Log(_prompt);
         Prompts.Add("\nme: " + _prompt);
         string s = "";
         for (int i = 0; i < Prompts.Count; i++) {
@@ -66,7 +68,6 @@ public class OpenAIV1Manager : MonoBehaviour {
         }
         s += "\n";
         s += "you: ";
-        Debug.Log(s);
         var request = new CreateCompletionRequest();
         request.Model = Instance.Model;
         request.Prompt = s;
@@ -76,6 +77,8 @@ public class OpenAIV1Manager : MonoBehaviour {
         request.Model = Instance.Model;
         var response = await API.CreateCompletion(request);
         Prompts.Add("\nyou: " + response.Choices[0].Text);
+        Debug.LogError(response.Choices[0].Text);
+        AzureTTSManager.Talk(response.Choices[0].Text);
         return response.Choices[0].Text;
     }
 }
